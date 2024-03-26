@@ -34,23 +34,32 @@ func (mt *MerkleTree) GenerateMerkleProof(leafIdx int) []*TreeNode {
 
 // VerifyMerkleProof verifies the Merkle proof for the given file data and leaf index.
 func (mt *MerkleTree) VerifyMerkleProof(file []byte, leafIdx int, proofs []*TreeNode) bool {
+
+	if mt.root == nil {
+		return false
+	}
+
 	merkleHash := calcHash(file)
 	leaf := findLeaf(mt.root, leafIdx)
 	if leaf == nil || leaf.Hash != merkleHash {
 		return false
 	}
 
-	curr := &TreeNode{}
-	*curr = *leaf
-	for _, proof := range proofs {
-		if curr.LeftIdx < proof.LeftIdx && curr.RightIdx < proof.RightIdx {
-			merkleHash = calcHash(append([]byte(merkleHash), []byte(proof.Hash)...))
-		} else {
-			merkleHash = calcHash(append([]byte(proof.Hash), []byte(merkleHash)...))
+	// If the root has either a left or right child
+	if mt.root.Left != nil || mt.root.Right != nil {
+		curr := &TreeNode{}
+		*curr = *leaf
+		for _, proof := range proofs {
+			if curr.LeftIdx < proof.LeftIdx && curr.RightIdx < proof.RightIdx {
+				merkleHash = calcHash(append([]byte(merkleHash), []byte(proof.Hash)...))
+			} else {
+				merkleHash = calcHash(append([]byte(proof.Hash), []byte(merkleHash)...))
+			}
+			curr.LeftIdx = min(curr.LeftIdx, proof.LeftIdx)
+			curr.RightIdx = max(curr.RightIdx, proof.RightIdx)
 		}
-		curr.LeftIdx = min(curr.LeftIdx, proof.LeftIdx)
-		curr.RightIdx = max(curr.RightIdx, proof.RightIdx)
 	}
+
 	return mt.root.Hash == merkleHash
 }
 
@@ -206,7 +215,12 @@ func maxDepth(root *TreeNode) int {
 func main() {
 	files := [][]byte{
 		[]byte("A"), []byte("B"), []byte("C"), []byte("D"),
-		[]byte("E"),
+		[]byte("E"), []byte("F"), []byte("G"), []byte("H"),
+		[]byte("I"), []byte("J"), []byte("K"), []byte("L"),
+		[]byte("M"), []byte("N"), []byte("O"), []byte("P"),
+		[]byte("Q"), []byte("R"), []byte("S"), []byte("T"),
+		[]byte("U"), []byte("V"), []byte("W"), []byte("X"),
+		[]byte("Y"), []byte("Z"),
 	}
 
 	merkleTree := BuildMerkleTree(files)
@@ -232,8 +246,18 @@ func main() {
 		fmt.Printf("merkle proof for index:%d  is %d \n", idx, genProofIdx(merkleTree.root, idx))
 	}
 
+	fmt.Println("************************************************  VERIFY PROOF FORWARD **************************************************************************************")
+
 	n := len(files)
 	for idx := 0; idx <= n-1; idx++ {
+		proofs := merkleTree.GenerateMerkleProof(idx)
+		fmt.Printf("merkle proof for index:%d  is %d \n", idx, genProofIdx(merkleTree.root, idx))
+		fmt.Printf("merkle verification for index:%d is: %t \n", idx, merkleTree.VerifyMerkleProof(files[idx], idx, proofs))
+	}
+
+	fmt.Println("************************************************  VERIFY PROOF REVERSE **************************************************************************************")
+
+	for idx := n - 1; idx >= 0; idx-- {
 		proofs := merkleTree.GenerateMerkleProof(idx)
 		fmt.Printf("merkle proof for index:%d  is %d \n", idx, genProofIdx(merkleTree.root, idx))
 		fmt.Printf("merkle verification for index:%d is: %t \n", idx, merkleTree.VerifyMerkleProof(files[idx], idx, proofs))
