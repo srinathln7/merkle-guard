@@ -24,17 +24,43 @@ func BuildMerkleTree(file [][]byte) *MerkleTree {
 	return &MerkleTree{root: root}
 }
 
-func (mt *MerkleTree) GenerateProof(leafIdx int) []string {
+func (mt *MerkleTree) GenerateMerkleProof(leafIdx int) []string {
 	var result []string
-	sibling := findSiblingByLeafIndex(mt.root, leafIdx)
-	result = append(result, sibling.Hash)
-	parent := findParentByLeafIndex(mt.root, leafIdx)
-	for parent != mt.root {
-		sibling = findSibling(mt.root, parent)
-		result = append(result, sibling.Hash)
-		parent = findParent(mt.root, parent)
+	for _, node := range genProof(mt.root, leafIdx) {
+		result = append(result, node.Hash)
+	}
+	return result
+}
+
+func genProofIdx(root *TreeNode, leafIdx int) [][]int {
+	var result [][]int
+	for _, node := range genProof(root, leafIdx) {
+		result = append(result, []int{node.LeftIdx, node.RightIdx})
+	}
+	return result
+}
+
+func genProof(root *TreeNode, leafIdx int) []*TreeNode {
+	var result []*TreeNode
+
+	// Base cases - Empty tree
+	if root == nil {
+		return nil
 	}
 
+	// Only one node
+	if root.Left == nil && root.Right == nil {
+		return []*TreeNode{root}
+	}
+
+	sibling := findSiblingByLeafIndex(root, leafIdx)
+	result = append(result, sibling)
+	parent := findParentByLeafIndex(root, leafIdx)
+	for parent != root {
+		sibling = findSibling(root, parent)
+		result = append(result, sibling)
+		parent = findParent(root, parent)
+	}
 	return result
 }
 
@@ -156,12 +182,12 @@ func findSiblingByLeafIndex(root *TreeNode, leafIdx int) *TreeNode {
 }
 
 func main() {
-	file := [][]byte{[]byte("A"), []byte("B"), []byte("C"), []byte("D"), []byte("E")}
-	merkleTree := BuildMerkleTree(file)
+	files := [][]byte{[]byte("A"), []byte("B"), []byte("C"), []byte("D"), []byte("E"), []byte("F")}
+	merkleTree := BuildMerkleTree(files)
 
 	fmt.Println("************************************************  FILE **************************************************************************************")
-	for i, chunk := range file {
-		fmt.Printf("Hash of chunk %d  -> %s \n", i, calculateHash(chunk))
+	for i, file := range files {
+		fmt.Printf("Hash of file %d  -> %s \n", i, calculateHash(file))
 	}
 
 	fmt.Println("************************************************  METADATA **************************************************************************************")
@@ -176,6 +202,7 @@ func main() {
 
 	fmt.Println("************************************************  GENERATE PROOF  **************************************************************************************")
 
-	idx := 1
-	fmt.Printf(" merkle proof for index:%d  is %s \n", idx, merkleTree.GenerateProof(idx))
+	for idx := range files {
+		fmt.Printf(" merkle proof for index:%d  is %d \n", idx, genProofIdx(merkleTree.root, idx))
+	}
 }
