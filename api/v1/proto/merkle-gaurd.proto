@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package merkle_gaurd;
+
+option go_package = "github.com/srinathLN7/api/merkle_gaurd";
+
+message UploadRequest {
+  repeated bytes files = 1;
+}
+
+message UploadResponse {
+  bytes merkle_root_hash = 1;
+}
+
+message DownloadRequest {
+  int64 file_index = 1;
+}
+
+message DownloadResponse {
+  bytes file_content = 1;
+}
+
+message MerkleProofRequest {
+  int64 file_index = 1;
+}
+
+message MerkleProofResponse {
+  repeated bytes proof = 1;
+}
+
+message VerifyProofRequest {
+  int64 file_index = 1;
+  bytes file_content = 2;
+  repeated bytes proof = 3;
+}
+
+message VerifyProofResponse {
+  bool verified = 1;
+}
+
+service MerkleTree {
+  rpc Upload(UploadRequest) returns (UploadResponse);
+  rpc Download(DownloadRequest) returns (DownloadResponse);
+  rpc GetMerkleProof(MerkleProofRequest) returns (MerkleProofResponse);
+  rpc VerifyMerkleProof(VerifyProofRequest) returns (VerifyProofResponse);
+}

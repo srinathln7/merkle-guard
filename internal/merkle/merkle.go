@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 
-	mterr "github.com/srinathln7/merkle-gaurd/lib/err"
+	mterr "github.com/srinathln7/merkle_gaurd/lib/err"
 )
 
 // TreeNode represents a node in the Merkle tree.
@@ -39,14 +39,14 @@ func (mt *MerkleTree) GenerateMerkleProof(leafIdx int) ([]*TreeNode, error) {
 }
 
 // VerifyMerkleProof verifies the Merkle proof for the given file data and leaf index.
-func (mt *MerkleTree) VerifyMerkleProof(file []byte, leafIdx int, proofs []*TreeNode) (bool, error) {
+func (mt *MerkleTree) VerifyMerkleProof(fileIdx int, file []byte, proofs []*TreeNode) (bool, error) {
 
 	if mt.root == nil {
 		return false, mterr.ErrEmptyRoot
 	}
 
 	merkleHash := calcHash(file)
-	leaf, err := findLeaf(mt.root, leafIdx)
+	leaf, err := findLeaf(mt.root, fileIdx)
 	if err != nil {
 		return false, err
 	}
@@ -75,6 +75,16 @@ func (mt *MerkleTree) VerifyMerkleProof(file []byte, leafIdx int, proofs []*Tree
 	}
 
 	return mt.root.Hash == merkleHash, nil
+}
+
+func (mt *MerkleTree) PrintTreeInfo() {
+	fmt.Println(" ******************************** Merkle Tree INFO ***************************************************************")
+
+	fmt.Printf("Total number of nodes: %d \n", countNodes(mt.root))
+	fmt.Printf("Height of the merkle tree: %d \n", maxDepth(mt.root))
+
+	fmt.Println(" ******************************** Merkle Tree  ********************************************************************")
+	printTree(mt.root, "", true)
 }
 
 // buildTree recursively builds the Merkle tree.
@@ -269,86 +279,3 @@ func maxDepth(root *TreeNode) int {
 	}
 	return rightDepth
 }
-
-// func main() {
-// 	files := [][]byte{
-// 		[]byte("A"), []byte("B"), []byte("C"), []byte("D"),
-// 	}
-
-// 	merkleTree, err := BuildMerkleTree(files)
-// 	if err != nil {
-// 		log.Fatalf("error builing merkle tree %s \n", err.Error())
-// 	}
-
-// 	fmt.Println("************************************************  FILE **************************************************************************************")
-// 	for i, file := range files {
-// 		fmt.Printf("Hash of file %d  -> %s \n", i, calcHash(file))
-// 	}
-
-// 	fmt.Println("************************************************  METADATA **************************************************************************************")
-// 	fmt.Println("Root Hash:", merkleTree.root.Hash)
-// 	fmt.Println("Total nodes:", countNodes(merkleTree.root))
-// 	fmt.Println("Height:", maxDepth(merkleTree.root))
-
-// 	fmt.Println("************************************************  MERKLE TREE  **************************************************************************************")
-// 	fmt.Println(merkleTree.root)
-// 	printTree(merkleTree.root, "", true)
-// 	fmt.Println("************************************************  MERKLE TREE  **************************************************************************************")
-
-// 	fmt.Println("************************************************  GENERATE PROOF  **************************************************************************************")
-
-// 	for idx := range files {
-// 		result, err := genProofIdx(merkleTree.root, idx)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-// 		fmt.Printf("merkle proof for index:%d  is %d \n", idx, result)
-// 	}
-
-// 	fmt.Println("************************************************  VERIFY PROOF FORWARD **************************************************************************************")
-
-// 	n := len(files)
-// 	for idx := 0; idx <= n-1; idx++ {
-// 		proofs, err := merkleTree.GenerateMerkleProof(idx)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-
-// 		idxs, err := genProofIdx(merkleTree.root, idx)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-
-// 		fmt.Printf("merkle proof for index:%d  is %d \n", idx, idxs)
-
-// 		result, err := merkleTree.VerifyMerkleProof(files[idx], idx, proofs)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-
-// 		fmt.Printf("merkle verification for index:%d is: %t \n", idx, result)
-// 	}
-
-// 	fmt.Println("************************************************  VERIFY PROOF REVERSE **************************************************************************************")
-
-// 	for idx := n - 1; idx >= 0; idx-- {
-// 		proofs, err := merkleTree.GenerateMerkleProof(idx)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-
-// 		idxs, err := genProofIdx(merkleTree.root, idx)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-
-// 		fmt.Printf("merkle proof for index:%d  is %d \n", idx, idxs)
-
-// 		result, err := merkleTree.VerifyMerkleProof(files[idx], idx, proofs)
-// 		if err != nil {
-// 			log.Fatalf(err.Error())
-// 		}
-
-// 		fmt.Printf("merkle verification for index:%d is: %t \n", idx, result)
-// 	}
-// }
