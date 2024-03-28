@@ -27,8 +27,8 @@ message MerkleProofRequest {
 
 message TreeNode {
     string hash = 1;
-    int32 left_idx = 2;
-    int32 right_idx = 3;
+    int64 left_idx = 2;
+    int64 right_idx = 3;
     TreeNode left = 4;
     TreeNode right = 5;
 }
@@ -46,7 +46,7 @@ message VerifyProofRequest {
 }
 
 message VerifyProofResponse {
-  bool verified = 1;
+  bool is_verified = 1;
 }
 
 service MerkleTree {

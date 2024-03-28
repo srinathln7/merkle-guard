@@ -11,4 +11,5 @@ var (
 	ErrFileHashMisMatch       = errors.New("file hash mis-match")
 	ErrMerkleVerificationFail = errors.New("merkle tree verification failed")
 	ErrLeafDoesNotExist       = errors.New("leaf node does not exist")
+	ErrConversion             = errors.New("type conversion not successful")
 )

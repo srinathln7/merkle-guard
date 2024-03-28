@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	api "github.com/srinathln7/merkle_gaurd/api/v1/proto"
+	mt "github.com/srinathln7/merkle_gaurd/internal/merkle"
 )
 
 // SetupGRPCClient: sets up the grpc client
@@ -82,6 +83,27 @@ func testClientMerkleVerficationSuccess(t *testing.T, grpcClient api.MerkleTreeC
 		require.Equal(t, expectedResp.FileContent, downloadResp.FileContent)
 	}
 
-	// start generating merkle proofs
+	for _, fileIdx := range fileIdxs {
+		recvResp, err := grpcClient.GetMerkleProof(
+			ctx,
+			&api.MerkleProofRequest{
+				FileIndex: int64(fileIdx),
+			},
+		)
+		require.NoError(t, err)
 
+		// Starting verifying the files
+		verifyResp, err := grpcClient.VerifyMerkleProof(
+			ctx,
+			&api.VerifyProofRequest{
+				RootHash:  uploadResp.MerkleRootHash,
+				FileHash:  []byte(mt.CalcHash(files[fileIdx])),
+				FileIndex: int64(fileIdx),
+				Proofs:    recvResp.Proofs,
+			},
+		)
+
+		require.NoError(t, err)
+		require.True(t, verifyResp.IsVerified)
+	}
 }

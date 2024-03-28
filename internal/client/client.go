@@ -134,7 +134,8 @@ type VerifyRequest struct {
 }
 
 type VerifyResponse struct {
-	Msg string `json:"msg"`
+	Msg       string `json:"msg"`
+	IsVerfied bool   `json:"is_Verified"`
 }
 
 func VerifyMerkleProof(grpcClient api.MerkleTreeClient, req VerifyRequest) (*VerifyResponse, error) {
@@ -154,12 +155,13 @@ func VerifyMerkleProof(grpcClient api.MerkleTreeClient, req VerifyRequest) (*Ver
 		return nil, err
 	}
 
-	if !resp.Verified {
+	if !resp.IsVerified {
 		return nil, mterr.ErrMerkleVerificationFail
 	}
 
 	msg := fmt.Sprintf("merkle verification for file%d is successful \n", req.FileIdx)
 	return &VerifyResponse{
-		Msg: msg,
+		Msg:       msg,
+		IsVerfied: true,
 	}, nil
 }

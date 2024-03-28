@@ -3,6 +3,7 @@ package merkle
 import (
 	"crypto/sha256"
 	"fmt"
+	"log"
 
 	mterr "github.com/srinathln7/merkle_gaurd/lib/err"
 )
@@ -35,6 +36,7 @@ func BuildMerkleTree(file [][]byte) (*MerkleTree, error) {
 
 // GenerateMerkleProof generates a Merkle proof for the given leaf index.
 func (mt *MerkleTree) GenerateMerkleProof(leafIdx int) ([]*TreeNode, error) {
+	log.Printf("[merkle-tree] starting to generate merkle proof for file index %d with root %T \n", leafIdx, mt.root)
 	return genProof(mt.root, leafIdx)
 }
 
@@ -122,6 +124,7 @@ func buildTree(file [][]byte, l, r int) *TreeNode {
 
 // genProof generates a Merkle proof for the given leaf index.
 func genProof(root *TreeNode, leafIdx int) ([]*TreeNode, error) {
+
 	switch {
 	case root == nil:
 		return nil, mterr.ErrEmptyFile
@@ -150,6 +153,7 @@ func genProof(root *TreeNode, leafIdx int) ([]*TreeNode, error) {
 		result = append(result, sibling)
 		parent, _ = findParent(root, parent)
 	}
+
 	return result, nil
 }
 

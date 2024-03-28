@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"unsafe"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -89,6 +88,7 @@ func (s *grpcServer) Download(ctx context.Context, req *api.DownloadRequest) (
 func (s *grpcServer) GetMerkleProof(ctx context.Context, req *api.MerkleProofRequest) (
 	*api.MerkleProofResponse, error) {
 
+	util.ServerLog("running GetMerkleProof ")
 	fileIdx := int(req.FileIndex)
 	if fileIdx < 0 || fileIdx >= len(s.files) {
 		return nil, mterr.ErrIndexOutOfBound
@@ -96,13 +96,40 @@ func (s *grpcServer) GetMerkleProof(ctx context.Context, req *api.MerkleProofReq
 
 	merkleProofs, err := s.merkleTree.GenerateMerkleProof(fileIdx)
 	if err != nil {
+		util.ErrLog(err.Error())
 		return nil, err
 	}
 
 	// Here, we use the unsafe package to perform a direct type conversion from []*merkle.TreeNode to []*api.TreeNode. This method avoids iterating
 	//through each element of the slice, making it more efficient. However, it's important to note that the use of unsafe package should be handled with
 	//caution as it bypasses Go's type safety mechanisms. Here we ensure that the types are truly compatible before using this approach.
-	var proofs []*api.TreeNode = *(*[]*api.TreeNode)(unsafe.Pointer(&merkleProofs))
+
+	// util.ServerLog("starting unsafe type conversion")
+	//var proofs []*api.TreeNode = *(*[]*api.TreeNode)(unsafe.Pointer(&merkleProofs))
+	var proofs []*api.TreeNode
+	for _, proof := range merkleProofs {
+		apiProof := &api.TreeNode{
+			Hash:     proof.Hash,
+			LeftIdx:  int64(proof.LeftIdx),
+			RightIdx: int64(proof.RightIdx),
+		}
+		if proof.Left != nil {
+			apiProof.Left = &api.TreeNode{
+				Hash:     proof.Left.Hash,
+				LeftIdx:  int64(proof.Left.LeftIdx),
+				RightIdx: int64(proof.Left.RightIdx),
+			}
+		}
+		if proof.Right != nil {
+			apiProof.Right = &api.TreeNode{
+				Hash:     proof.Right.Hash,
+				LeftIdx:  int64(proof.Right.LeftIdx),
+				RightIdx: int64(proof.Right.RightIdx),
+			}
+		}
+		proofs = append(proofs, apiProof)
+	}
+
 	return &api.MerkleProofResponse{Proofs: proofs}, nil
 }
 
@@ -119,11 +146,37 @@ func (s *grpcServer) VerifyMerkleProof(ctx context.Context, req *api.VerifyProof
 		return nil, mterr.ErrFileHashMisMatch
 	}
 
-	// Using `unsafe` type conversion for reasons state above
-	var merkleProofs []*mt.TreeNode = *(*[]*mt.TreeNode)(unsafe.Pointer(&req.Proofs))
+	// var merkleProofs []*mt.TreeNode = *(*[]*mt.TreeNode)(unsafe.Pointer(&req.Proofs))
+	var merkleProofs []*mt.TreeNode
+	for _, proof := range req.Proofs {
+		merkleProof := &mt.TreeNode{
+			Hash:     proof.Hash,
+			LeftIdx:  int(proof.LeftIdx),
+			RightIdx: int(proof.RightIdx),
+		}
+
+		if proof.Left != nil {
+			merkleProof.Left = &mt.TreeNode{
+				Hash:     proof.Left.Hash,
+				LeftIdx:  int(proof.Left.LeftIdx),
+				RightIdx: int(proof.Left.RightIdx),
+			}
+		}
+
+		if proof.Right != nil {
+			merkleProof.Right = &mt.TreeNode{
+				Hash:     proof.Right.Hash,
+				LeftIdx:  int(proof.Right.LeftIdx),
+				RightIdx: int(proof.Right.RightIdx),
+			}
+		}
+
+		merkleProofs = append(merkleProofs, merkleProof)
+	}
+
 	isVerified, err := s.merkleTree.VerifyMerkleProof(string(req.RootHash), string(req.FileHash), fileIdx, merkleProofs)
 	if err != nil {
 		return nil, err
 	}
-	return &api.VerifyProofResponse{Verified: isVerified}, nil
+	return &api.VerifyProofResponse{IsVerified: isVerified}, nil
 }
