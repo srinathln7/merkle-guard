@@ -39,9 +39,10 @@ message MerkleProofResponse {
 }
 
 message VerifyProofRequest {
-  int64 file_index = 1;
-  bytes file_content = 2;
-  repeated TreeNode proofs = 3;
+  bytes root_hash = 1;
+  bytes file_hash = 2;
+  int64 file_index =3;
+  repeated TreeNode proofs = 4;
 }
 
 message VerifyProofResponse {

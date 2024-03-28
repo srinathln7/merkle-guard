@@ -115,10 +115,13 @@ func (s *grpcServer) VerifyMerkleProof(ctx context.Context, req *api.VerifyProof
 	}
 
 	file := s.files[fileIdx]
+	if string(req.FileHash) != mt.CalcHash(file) {
+		return nil, mterr.ErrFileHashMisMatch
+	}
 
 	// Using `unsafe` type conversion for reasons state above
 	var merkleProofs []*mt.TreeNode = *(*[]*mt.TreeNode)(unsafe.Pointer(&req.Proofs))
-	isVerified, err := s.merkleTree.VerifyMerkleProof(fileIdx, file, merkleProofs)
+	isVerified, err := s.merkleTree.VerifyMerkleProof(string(req.RootHash), string(req.FileHash), fileIdx, merkleProofs)
 	if err != nil {
 		return nil, err
 	}

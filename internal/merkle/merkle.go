@@ -39,13 +39,17 @@ func (mt *MerkleTree) GenerateMerkleProof(leafIdx int) ([]*TreeNode, error) {
 }
 
 // VerifyMerkleProof verifies the Merkle proof for the given file data and leaf index.
-func (mt *MerkleTree) VerifyMerkleProof(fileIdx int, file []byte, proofs []*TreeNode) (bool, error) {
+func (mt *MerkleTree) VerifyMerkleProof(rootHash, fileHash string, fileIdx int, proofs []*TreeNode) (bool, error) {
 
 	if mt.root == nil {
 		return false, mterr.ErrEmptyRoot
 	}
 
-	merkleHash := calcHash(file)
+	if mt.root.Hash != rootHash {
+		return false, mterr.ErrMerkleRootHashMisMatch
+	}
+
+	merkleHash := fileHash
 	leaf, err := findLeaf(mt.root, fileIdx)
 	if err != nil {
 		return false, err
@@ -65,16 +69,16 @@ func (mt *MerkleTree) VerifyMerkleProof(fileIdx int, file []byte, proofs []*Tree
 		*curr = *leaf
 		for _, proof := range proofs {
 			if curr.LeftIdx < proof.LeftIdx && curr.RightIdx < proof.RightIdx {
-				merkleHash = calcHash(append([]byte(merkleHash), []byte(proof.Hash)...))
+				merkleHash = CalcHash(append([]byte(merkleHash), []byte(proof.Hash)...))
 			} else {
-				merkleHash = calcHash(append([]byte(proof.Hash), []byte(merkleHash)...))
+				merkleHash = CalcHash(append([]byte(proof.Hash), []byte(merkleHash)...))
 			}
 			curr.LeftIdx = min(curr.LeftIdx, proof.LeftIdx)
 			curr.RightIdx = max(curr.RightIdx, proof.RightIdx)
 		}
 	}
 
-	return mt.root.Hash == merkleHash, nil
+	return mt.root.Hash == merkleHash && rootHash == merkleHash, nil
 }
 
 // GetMerkleRoot returns the root node of the Merkle tree.
@@ -102,13 +106,13 @@ func (mt *MerkleTree) PrintTreeInfo() {
 // buildTree recursively builds the Merkle tree.
 func buildTree(file [][]byte, l, r int) *TreeNode {
 	if l == r {
-		return &TreeNode{Hash: calcHash(file[l]), LeftIdx: l, RightIdx: r}
+		return &TreeNode{Hash: CalcHash(file[l]), LeftIdx: l, RightIdx: r}
 	}
 	mid := l + (r-l)/2
 	left := buildTree(file, l, mid)
 	right := buildTree(file, mid+1, r)
 	return &TreeNode{
-		Hash:     calcHash(append([]byte(left.Hash), []byte(right.Hash)...)),
+		Hash:     CalcHash(append([]byte(left.Hash), []byte(right.Hash)...)),
 		LeftIdx:  l,
 		RightIdx: r,
 		Left:     left,
@@ -121,7 +125,7 @@ func genProof(root *TreeNode, leafIdx int) ([]*TreeNode, error) {
 	switch {
 	case root == nil:
 		return nil, mterr.ErrEmptyFile
-	case leafIdx < root.LeftIdx || leafIdx >= root.RightIdx:
+	case leafIdx < root.LeftIdx || leafIdx > root.RightIdx:
 		return nil, mterr.ErrIndexOutOfBound
 	}
 
@@ -185,7 +189,7 @@ func findLeaf(root *TreeNode, leafIdx int) (*TreeNode, error) {
 	switch {
 	case root == nil:
 		return nil, mterr.ErrEmptyFile
-	case leafIdx < root.LeftIdx || leafIdx >= root.RightIdx:
+	case leafIdx < root.LeftIdx || leafIdx > root.RightIdx:
 		return nil, mterr.ErrIndexOutOfBound
 	}
 
@@ -198,6 +202,31 @@ func findLeaf(root *TreeNode, leafIdx int) (*TreeNode, error) {
 	}
 	return findLeaf(root.Right, leafIdx)
 }
+
+// func findLeafIdxByVal(root *TreeNode, hashValue string) (int, error) {
+// 	// Base case: if root is nil, return an error
+// 	if root == nil {
+// 		return 0, mterr.ErrEmptyRoot
+// 	}
+
+// 	// Base case: if root is a leaf node and its hash matches the target hash, return its indices
+// 	if root.Left == nil && root.Right == nil && root.Hash == hashValue && root.LeftIdx == root.RightIdx {
+// 		return root.LeftIdx, nil
+// 	}
+
+// 	// Recursively search the left subtree
+// 	if leftIndices, err := findLeafIdxByVal(root.Left, hashValue); err == nil {
+// 		return leftIndices, nil
+// 	}
+
+// 	// Recursively search the right subtree
+// 	if rightIndices, err := findLeafIdxByVal(root.Right, hashValue); err == nil {
+// 		return rightIndices, nil
+// 	}
+
+// 	// Return an error if the hash value is not found in the tree
+// 	return 0, mterr.ErrLeafDoesNotExist
+// }
 
 // findParent finds the parent node of the given node.
 func findParent(root, node *TreeNode) (*TreeNode, error) {
@@ -266,7 +295,7 @@ func findSiblingByLeafIndex(root *TreeNode, leafIdx int) (*TreeNode, error) {
 }
 
 // calcHash calculates the SHA-256 hash of the given byte slice and returns it as a hexadecimal string.
-func calcHash(file []byte) string {
+func CalcHash(file []byte) string {
 	hash := sha256.Sum256(file)
 	return fmt.Sprintf("%x", hash)
 }

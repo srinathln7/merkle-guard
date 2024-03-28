@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	api "github.com/srinathln7/merkle_gaurd/api/v1/proto"
+	mt "github.com/srinathln7/merkle_gaurd/internal/merkle"
 	mterr "github.com/srinathln7/merkle_gaurd/lib/err"
 )
 
@@ -54,6 +55,13 @@ func Upload(grpcClient api.MerkleTreeClient, files [][]byte) (*UploadResponse, e
 
 	if err != nil {
 		util.ErrLog(err.Error())
+		return nil, err
+	}
+
+	// Store the resulting merkle root hash on client side disk - say a simple `.json` file
+	util.ClientLog("storing the merkle tree root hash on client's disk")
+	err = os.WriteFile(os.Getenv("MERKLE_ROOT_FILE"), resp.MerkleRootHash, 0644)
+	if err != nil {
 		return nil, err
 	}
 
@@ -116,9 +124,10 @@ func GetMerkleProof(grpcClient api.MerkleTreeClient, fileIdx int) (*ProofRespons
 }
 
 type VerifyRequest struct {
-	FileIdx int             `json:"file_index"`
-	File    []byte          `json:"file"`
-	Proofs  []*api.TreeNode `json:"proofs"`
+	RootHash []byte          `json:"root_hash"`
+	FileIdx  int             `json:"file_idx"`
+	File     []byte          `json:"file"`
+	Proofs   []*api.TreeNode `json:"proofs"`
 }
 
 type VerifyResponse struct {
@@ -130,9 +139,10 @@ func VerifyMerkleProof(grpcClient api.MerkleTreeClient, req VerifyRequest) (*Ver
 	resp, err := grpcClient.VerifyMerkleProof(
 		ctx,
 		&api.VerifyProofRequest{
-			FileIndex:   int64(req.FileIdx),
-			FileContent: req.File,
-			Proofs:      req.Proofs,
+			RootHash:  req.RootHash,
+			FileIndex: int64(req.FileIdx),
+			FileHash:  []byte(mt.CalcHash(req.File)),
+			Proofs:    req.Proofs,
 		},
 	)
 

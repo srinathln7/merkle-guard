@@ -87,7 +87,7 @@ func TestMerkleTree(t *testing.T) {
 			for idx, file := range test.files {
 				merkleProofs, err := merkleTree.GenerateMerkleProof(idx)
 				require.NoError(t, err)
-				isVerified, err := merkleTree.VerifyMerkleProof(idx, file, merkleProofs)
+				isVerified, err := merkleTree.VerifyMerkleProof(merkleTree.root.Hash, CalcHash(file), idx, merkleProofs)
 				require.NoError(t, err)
 				require.True(t, isVerified, "merkle proof verification failed for test %s at file index %d \n", test.name, idx)
 			}
@@ -96,7 +96,7 @@ func TestMerkleTree(t *testing.T) {
 			for idx := len(test.files) - 1; idx >= 0; idx-- {
 				merkleProofs, err := merkleTree.GenerateMerkleProof(idx)
 				require.NoError(t, err)
-				isVerified, err := merkleTree.VerifyMerkleProof(idx, test.files[idx], merkleProofs)
+				isVerified, err := merkleTree.VerifyMerkleProof(merkleTree.root.Hash, CalcHash(test.files[idx]), idx, merkleProofs)
 				require.NoError(t, err)
 				require.True(t, isVerified, "merkle proof verification failed for test %s at file index %d \n", test.name, idx)
 			}
