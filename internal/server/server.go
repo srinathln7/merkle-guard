@@ -5,18 +5,21 @@ import (
 	"log"
 	"net"
 	"os"
+	"unsafe"
 
 	"github.com/joho/godotenv"
-	api "github.com/srinathln7/merkle_gaurd/api/v1/proto"
 	"google.golang.org/grpc"
 
+	api "github.com/srinathln7/merkle_gaurd/api/v1/proto"
 	mt "github.com/srinathln7/merkle_gaurd/internal/merkle"
+	mterr "github.com/srinathln7/merkle_gaurd/lib/err"
 )
 
 type grpcServer struct {
 	api.UnimplementedMerkleTreeServer
 
-	mt.MerkleTree
+	files      [][]byte
+	merkleTree *mt.MerkleTree
 }
 
 func RunServer() {
@@ -40,7 +43,6 @@ func RunServer() {
 	}
 
 	// Listen on the specified grpc server port
-
 	log.Printf("grpc server listening on: %s\n", listener.Addr().String())
 
 	// Start the gRPC server
@@ -49,7 +51,7 @@ func RunServer() {
 	}
 }
 
-// NewGRPCServer: creates a grpc server and registers the service to that server
+// newgrpcServer: creates a grpc server and registers the service to that server
 func newgrpcServer() (*grpc.Server, error) {
 	gsrv := grpc.NewServer()
 	srv := &grpcServer{}
@@ -59,24 +61,62 @@ func newgrpcServer() (*grpc.Server, error) {
 
 func (s *grpcServer) Upload(ctx context.Context, req *api.UploadRequest) (
 	*api.UploadResponse, error) {
-
-	return &api.UploadResponse{}, nil
+	merkleTree, err := mt.BuildMerkleTree(req.Files)
+	if err != nil {
+		return nil, err
+	}
+	s.files = req.Files
+	s.merkleTree = merkleTree
+	merkleRoot := merkleTree.GetMerkleRoot()
+	return &api.UploadResponse{MerkleRootHash: []byte(merkleRoot.Hash)}, nil
 }
 
 func (s *grpcServer) Download(ctx context.Context, req *api.DownloadRequest) (
 	*api.DownloadResponse, error) {
 
-	return &api.DownloadResponse{}, nil
+	fileIdx := int(req.FileIndex)
+	if fileIdx < 0 || fileIdx >= len(s.files) {
+		return nil, mterr.ErrIndexOutOfBound
+	}
+
+	return &api.DownloadResponse{FileContent: s.files[fileIdx]}, nil
 }
 
 func (s *grpcServer) GetMerkleProof(ctx context.Context, req *api.MerkleProofRequest) (
 	*api.MerkleProofResponse, error) {
 
-	return &api.MerkleProofResponse{}, nil
+	fileIdx := int(req.FileIndex)
+	if fileIdx < 0 || fileIdx >= len(s.files) {
+		return nil, mterr.ErrIndexOutOfBound
+	}
+
+	merkleProofs, err := s.merkleTree.GenerateMerkleProof(fileIdx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Here, we use the unsafe package to perform a direct type conversion from []*merkle.TreeNode to []*api.TreeNode. This method avoids iterating
+	//through each element of the slice, making it more efficient. However, it's important to note that the use of unsafe package should be handled with
+	//caution as it bypasses Go's type safety mechanisms. Here we ensure that the types are truly compatible before using this approach.
+	var proofs []*api.TreeNode = *(*[]*api.TreeNode)(unsafe.Pointer(&merkleProofs))
+	return &api.MerkleProofResponse{Proofs: proofs}, nil
 }
 
 func (s *grpcServer) VerifyMerkleProof(ctx context.Context, req *api.VerifyProofRequest) (
 	*api.VerifyProofResponse, error) {
 
-	return &api.VerifyProofResponse{}, nil
+	fileIdx := int(req.FileIndex)
+	if fileIdx < 0 || fileIdx >= len(s.files) {
+		return nil, mterr.ErrIndexOutOfBound
+	}
+
+	file := s.files[fileIdx]
+
+	// Using `unsafe` type conversion for reasons state above
+	var merkleProofs []*mt.TreeNode = *(*[]*mt.TreeNode)(unsafe.Pointer(&req.Proofs))
+	isVerified, err := s.merkleTree.VerifyMerkleProof(fileIdx, file, merkleProofs)
+	if err != nil {
+		return nil, err
+	}
+	return &api.VerifyProofResponse{Verified: isVerified}, nil
 }

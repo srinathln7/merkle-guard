@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package merkle_gaurd;
 
-option go_package = "github.com/srinathLN7/api/merkle_gaurd";
+option go_package = "github.com/srinathln7/api/merkle_gaurd";
 
 message UploadRequest {
   repeated bytes files = 1;
@@ -24,14 +24,24 @@ message MerkleProofRequest {
   int64 file_index = 1;
 }
 
+
+message TreeNode {
+    string hash = 1;
+    int32 left_idx = 2;
+    int32 right_idx = 3;
+    TreeNode left = 4;
+    TreeNode right = 5;
+}
+
+
 message MerkleProofResponse {
-  repeated bytes proof = 1;
+  repeated TreeNode proofs = 1;
 }
 
 message VerifyProofRequest {
   int64 file_index = 1;
   bytes file_content = 2;
-  repeated bytes proof = 3;
+  repeated TreeNode proofs = 3;
 }
 
 message VerifyProofResponse {

@@ -77,6 +77,18 @@ func (mt *MerkleTree) VerifyMerkleProof(fileIdx int, file []byte, proofs []*Tree
 	return mt.root.Hash == merkleHash, nil
 }
 
+// GetMerkleRoot returns the root node of the Merkle tree.
+// If the MerkleTree instance is nil, it returns nil.
+func (mt *MerkleTree) GetMerkleRoot() *TreeNode {
+	if mt == nil {
+		return nil
+	}
+	return mt.root
+}
+
+// PrintTreeInfo prints information about the Merkle tree.
+// It displays the total number of nodes in the tree and its height.
+// Additionally, it prints the Merkle tree structure.
 func (mt *MerkleTree) PrintTreeInfo() {
 	fmt.Println(" ******************************** Merkle Tree INFO ***************************************************************")
 
@@ -109,7 +121,7 @@ func genProof(root *TreeNode, leafIdx int) ([]*TreeNode, error) {
 	switch {
 	case root == nil:
 		return nil, mterr.ErrEmptyFile
-	case leafIdx < root.LeftIdx || leafIdx > root.RightIdx:
+	case leafIdx < root.LeftIdx || leafIdx >= root.RightIdx:
 		return nil, mterr.ErrIndexOutOfBound
 	}
 
@@ -173,7 +185,7 @@ func findLeaf(root *TreeNode, leafIdx int) (*TreeNode, error) {
 	switch {
 	case root == nil:
 		return nil, mterr.ErrEmptyFile
-	case leafIdx < root.LeftIdx || leafIdx > root.RightIdx:
+	case leafIdx < root.LeftIdx || leafIdx >= root.RightIdx:
 		return nil, mterr.ErrIndexOutOfBound
 	}
 

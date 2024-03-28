@@ -201,5 +201,5 @@ var _MerkleTree_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/v1/proto/merkle-gaurd.proto",
+	Metadata: "api/v1/proto/merkle.proto",
 }
