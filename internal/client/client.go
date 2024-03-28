@@ -16,6 +16,8 @@ import (
 	mterr "github.com/srinathln7/merkle_gaurd/lib/err"
 )
 
+var MERKLE_ROOT_FILE string
+
 func SetupGRPCClient() (*api.MerkleTreeClient, error) {
 
 	err := godotenv.Load(".env")
@@ -60,11 +62,12 @@ func Upload(grpcClient api.MerkleTreeClient, files [][]byte) (*UploadResponse, e
 
 	// Store the resulting merkle root hash on client side disk - say a simple `.json` file
 	util.ClientLog("storing the merkle tree root hash on client's disk")
-	err = os.WriteFile(os.Getenv("MERKLE_ROOT_FILE"), resp.MerkleRootHash, 0644)
-	if err != nil {
-		return nil, err
-	}
+	// err = os.WriteFile(os.Getenv("MERKLE_ROOT_FILE"), resp.MerkleRootHash, 0644)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
+	MERKLE_ROOT_FILE = string(resp.MerkleRootHash)
 	return &UploadResponse{
 		Msg:      "all files uploaded successfully",
 		RootHash: string(resp.MerkleRootHash),

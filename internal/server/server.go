@@ -38,7 +38,7 @@ func RunServer() {
 	}
 
 	// Create a new gRPC server and register the service
-	grpcServer, err := newgrpcServer()
+	grpcServer, err := NewgrpcServer()
 	if err != nil {
 		log.Fatalf("failed to create gRPC server: %v", err)
 	}
@@ -53,7 +53,7 @@ func RunServer() {
 }
 
 // newgrpcServer: creates a grpc server and registers the service to that server
-func newgrpcServer() (*grpc.Server, error) {
+func NewgrpcServer() (*grpc.Server, error) {
 	gsrv := grpc.NewServer()
 	srv := &grpcServer{}
 	api.RegisterMerkleTreeServer(gsrv, srv)
