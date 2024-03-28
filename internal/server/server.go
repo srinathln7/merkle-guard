@@ -13,6 +13,7 @@ import (
 	api "github.com/srinathln7/merkle_gaurd/api/v1/proto"
 	mt "github.com/srinathln7/merkle_gaurd/internal/merkle"
 	mterr "github.com/srinathln7/merkle_gaurd/lib/err"
+	"github.com/srinathln7/merkle_gaurd/lib/util"
 )
 
 type grpcServer struct {
@@ -68,6 +69,9 @@ func (s *grpcServer) Upload(ctx context.Context, req *api.UploadRequest) (
 	s.files = req.Files
 	s.merkleTree = merkleTree
 	merkleRoot := merkleTree.GetMerkleRoot()
+
+	util.ServerLog("Resulting merkle tree after the client uploaded all the files")
+	merkleTree.PrintTreeInfo()
 	return &api.UploadResponse{MerkleRootHash: []byte(merkleRoot.Hash)}, nil
 }
 
