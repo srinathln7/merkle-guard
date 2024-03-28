@@ -24,6 +24,7 @@ type MerkleTree struct {
 
 // BuildMerkleTree builds a Merkle tree from the given file data.
 func BuildMerkleTree(file [][]byte) (*MerkleTree, error) {
+	log.Println("[merkle-tree] starting to build merkle trees")
 	n := len(file)
 	if n == 0 {
 		return nil, mterr.ErrEmptyFile
@@ -42,7 +43,7 @@ func (mt *MerkleTree) GenerateMerkleProof(leafIdx int) ([]*TreeNode, error) {
 
 // VerifyMerkleProof verifies the Merkle proof for the given file data and leaf index.
 func (mt *MerkleTree) VerifyMerkleProof(rootHash, fileHash string, fileIdx int, proofs []*TreeNode) (bool, error) {
-
+	log.Printf("[merkle-tree] verifying merkle proof for file index %d with merkle root hash %s \n", fileIdx, mt.root.Hash)
 	if mt.root == nil {
 		return false, mterr.ErrEmptyRoot
 	}
@@ -96,12 +97,12 @@ func (mt *MerkleTree) GetMerkleRoot() *TreeNode {
 // It displays the total number of nodes in the tree and its height.
 // Additionally, it prints the Merkle tree structure.
 func (mt *MerkleTree) PrintTreeInfo() {
-	fmt.Println(" ******************************** Merkle Tree INFO ***************************************************************")
+	fmt.Println(" ******************************** Merkle Tree Metadata ***************************************************************")
 
 	fmt.Printf("Total number of nodes: %d \n", countNodes(mt.root))
 	fmt.Printf("Height of the merkle tree: %d \n", maxDepth(mt.root))
 
-	fmt.Println(" ******************************** Merkle Tree  ********************************************************************")
+	fmt.Println(" ******************************** Merkle Tree  ***********************************************************************")
 	printTree(mt.root, "", true)
 }
 
@@ -124,7 +125,6 @@ func buildTree(file [][]byte, l, r int) *TreeNode {
 
 // genProof generates a Merkle proof for the given leaf index.
 func genProof(root *TreeNode, leafIdx int) ([]*TreeNode, error) {
-
 	switch {
 	case root == nil:
 		return nil, mterr.ErrEmptyFile
@@ -206,31 +206,6 @@ func findLeaf(root *TreeNode, leafIdx int) (*TreeNode, error) {
 	}
 	return findLeaf(root.Right, leafIdx)
 }
-
-// func findLeafIdxByVal(root *TreeNode, hashValue string) (int, error) {
-// 	// Base case: if root is nil, return an error
-// 	if root == nil {
-// 		return 0, mterr.ErrEmptyRoot
-// 	}
-
-// 	// Base case: if root is a leaf node and its hash matches the target hash, return its indices
-// 	if root.Left == nil && root.Right == nil && root.Hash == hashValue && root.LeftIdx == root.RightIdx {
-// 		return root.LeftIdx, nil
-// 	}
-
-// 	// Recursively search the left subtree
-// 	if leftIndices, err := findLeafIdxByVal(root.Left, hashValue); err == nil {
-// 		return leftIndices, nil
-// 	}
-
-// 	// Recursively search the right subtree
-// 	if rightIndices, err := findLeafIdxByVal(root.Right, hashValue); err == nil {
-// 		return rightIndices, nil
-// 	}
-
-// 	// Return an error if the hash value is not found in the tree
-// 	return 0, mterr.ErrLeafDoesNotExist
-// }
 
 // findParent finds the parent node of the given node.
 func findParent(root, node *TreeNode) (*TreeNode, error) {

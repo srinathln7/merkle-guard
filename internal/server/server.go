@@ -100,14 +100,8 @@ func (s *grpcServer) GetMerkleProof(ctx context.Context, req *api.MerkleProofReq
 		return nil, err
 	}
 
-	// Here, we use the unsafe package to perform a direct type conversion from []*merkle.TreeNode to []*api.TreeNode. This method avoids iterating
-	//through each element of the slice, making it more efficient. However, it's important to note that the use of unsafe package should be handled with
-	//caution as it bypasses Go's type safety mechanisms. Here we ensure that the types are truly compatible before using this approach.
-
-	// util.ServerLog("starting unsafe type conversion")
-	//var proofs []*api.TreeNode = *(*[]*api.TreeNode)(unsafe.Pointer(&merkleProofs))
-	var proofs []*api.TreeNode
-	for _, proof := range merkleProofs {
+	proofs := make([]*api.TreeNode, len(merkleProofs))
+	for idx, proof := range merkleProofs {
 		apiProof := &api.TreeNode{
 			Hash:     proof.Hash,
 			LeftIdx:  int64(proof.LeftIdx),
@@ -127,7 +121,7 @@ func (s *grpcServer) GetMerkleProof(ctx context.Context, req *api.MerkleProofReq
 				RightIdx: int64(proof.Right.RightIdx),
 			}
 		}
-		proofs = append(proofs, apiProof)
+		proofs[idx] = apiProof
 	}
 
 	return &api.MerkleProofResponse{Proofs: proofs}, nil
@@ -146,9 +140,8 @@ func (s *grpcServer) VerifyMerkleProof(ctx context.Context, req *api.VerifyProof
 		return nil, mterr.ErrFileHashMisMatch
 	}
 
-	// var merkleProofs []*mt.TreeNode = *(*[]*mt.TreeNode)(unsafe.Pointer(&req.Proofs))
-	var merkleProofs []*mt.TreeNode
-	for _, proof := range req.Proofs {
+	merkleProofs := make([]*mt.TreeNode, len(req.Proofs))
+	for idx, proof := range req.Proofs {
 		merkleProof := &mt.TreeNode{
 			Hash:     proof.Hash,
 			LeftIdx:  int(proof.LeftIdx),
@@ -171,7 +164,7 @@ func (s *grpcServer) VerifyMerkleProof(ctx context.Context, req *api.VerifyProof
 			}
 		}
 
-		merkleProofs = append(merkleProofs, merkleProof)
+		merkleProofs[idx] = merkleProof
 	}
 
 	isVerified, err := s.merkleTree.VerifyMerkleProof(string(req.RootHash), string(req.FileHash), fileIdx, merkleProofs)

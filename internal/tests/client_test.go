@@ -69,7 +69,7 @@ func testClientMerkleVerficationSuccess(t *testing.T, grpcClient api.MerkleTreeC
 	require.NoError(t, err)
 	require.Equal(t, expectedResp.MerkleRootHash, uploadResp.MerkleRootHash)
 
-	// Start downloading files in a psuedo-random order
+	// Start downloading files in some psuedo-random order
 	fileIdxs := []int{2, 3, 0, 1}
 	for _, fileIdx := range fileIdxs {
 		expectedResp := &api.DownloadResponse{FileContent: files[fileIdx]}
@@ -105,5 +105,21 @@ func testClientMerkleVerficationSuccess(t *testing.T, grpcClient api.MerkleTreeC
 
 		require.NoError(t, err)
 		require.True(t, verifyResp.IsVerified)
+	}
+}
+
+func testClientMerkleVerficationEmptyFile(t *testing.T, grpcClient api.MerkleTreeClient) {
+	ctx := context.Background()
+	files := [][]byte{}
+
+	_, err := grpcClient.Upload(
+		ctx,
+		&api.UploadRequest{
+			Files: files,
+		},
+	)
+
+	if err == nil {
+		t.Fatal("expected a non-nil error")
 	}
 }

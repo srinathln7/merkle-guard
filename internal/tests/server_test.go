@@ -23,8 +23,12 @@ func TestGRPCServer(t *testing.T) {
 	// Subtests are a way to group related tests together and run them in a specific order.
 	// Each test case is run in its own subtest to provide better isolation, readability, and reporting.
 
-	t.Run("merkle verification success", func(t *testing.T) {
+	t.Run("merkle verification for four files success", func(t *testing.T) {
 		testClientMerkleVerficationSuccess(t, grpcClient)
+	})
+
+	t.Run("merkle verification for empty file", func(t *testing.T) {
+		testClientMerkleVerficationEmptyFile(t, grpcClient)
 	})
 
 }

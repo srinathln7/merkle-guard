@@ -4,7 +4,7 @@ DOC_PATH=${PWD}/docs
 DOC_URL=http://localhost:6060/pkg/github.com/srinathln7/merkle_gaurd/?m=all
 CLIENT_URL=http://localhost:6060/pkg/github.com/srinathln7/merkle_gaurd/internal/client/?m=all
 SERVER_URL=http://localhost:6060/pkg/github.com/srinathln7/merkle_gaurd/internal/server/?m=all
-MT_URL=http://localhost:6060/pkg/github.com/srinathln7/merkle_gaurd/internal/?m=all 
+MT_URL=http://localhost:6060/pkg/github.com/srinathln7/merkle_gaurd/internal/merkle/?m=all 
 
 .PHONY: compile
 compile:
