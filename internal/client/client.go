@@ -7,15 +7,16 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	api "github.com/srinathln7/merkle_gaurd/api/v1/proto"
 	"github.com/srinathln7/merkle_gaurd/lib/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	api "github.com/srinathln7/merkle_gaurd/api/v1/proto"
+	mterr "github.com/srinathln7/merkle_gaurd/lib/err"
 )
 
 func SetupGRPCClient() (*api.MerkleTreeClient, error) {
 
-	// Set up the gRPC client
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("error loading .env file: %v", err)
@@ -57,7 +58,7 @@ func Upload(grpcClient api.MerkleTreeClient, files [][]byte) (*UploadResponse, e
 	}
 
 	return &UploadResponse{
-		Msg:      "All files uploaded successfully",
+		Msg:      "all files uploaded successfully",
 		RootHash: string(resp.MerkleRootHash),
 	}, nil
 }
@@ -81,9 +82,71 @@ func Download(grpcClient api.MerkleTreeClient, fileIdx int) (*DownloadResponse, 
 		return nil, err
 	}
 
-	msg := fmt.Sprintf("File%d downloaded successfully \n", fileIdx)
+	msg := fmt.Sprintf("file%d downloaded successfully \n", fileIdx)
 	return &DownloadResponse{
 		Msg:  msg,
 		File: resp.FileContent,
+	}, nil
+}
+
+type ProofResponse struct {
+	Msg    string          `json:"msg"`
+	Proofs []*api.TreeNode `json:"proofs"`
+}
+
+func GetMerkleProof(grpcClient api.MerkleTreeClient, fileIdx int) (*ProofResponse, error) {
+	ctx := context.Background()
+	resp, err := grpcClient.GetMerkleProof(
+		ctx,
+		&api.MerkleProofRequest{
+			FileIndex: int64(fileIdx),
+		},
+	)
+
+	if err != nil {
+		util.ErrLog(err.Error())
+		return nil, err
+	}
+
+	msg := fmt.Sprintf("merkle proofs for file%d generated successfully \n", fileIdx)
+	return &ProofResponse{
+		Msg:    msg,
+		Proofs: resp.Proofs,
+	}, nil
+}
+
+type VerifyRequest struct {
+	FileIdx int             `json:"file_index"`
+	File    []byte          `json:"file"`
+	Proofs  []*api.TreeNode `json:"proofs"`
+}
+
+type VerifyResponse struct {
+	Msg string `json:"msg"`
+}
+
+func VerifyMerkleProof(grpcClient api.MerkleTreeClient, req VerifyRequest) (*VerifyResponse, error) {
+	ctx := context.Background()
+	resp, err := grpcClient.VerifyMerkleProof(
+		ctx,
+		&api.VerifyProofRequest{
+			FileIndex:   int64(req.FileIdx),
+			FileContent: req.File,
+			Proofs:      req.Proofs,
+		},
+	)
+
+	if err != nil {
+		util.ErrLog(err.Error())
+		return nil, err
+	}
+
+	if !resp.Verified {
+		return nil, mterr.ErrMerkleVerificationFail
+	}
+
+	msg := fmt.Sprintf("merkle verification for file%d is successful \n", req.FileIdx)
+	return &VerifyResponse{
+		Msg: msg,
 	}, nil
 }
