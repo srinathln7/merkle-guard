@@ -32,6 +32,6 @@ func TestGRPCServer(t *testing.T) {
 	})
 
 	t.Run("merkle root mis-match", func(t *testing.T) {
-		testClientMerkleVerficationUploadFail(t, grpcClient)
+		testClientMerkleRootMisMatch(t, grpcClient)
 	})
 }

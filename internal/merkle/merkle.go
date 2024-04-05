@@ -149,9 +149,15 @@ func genProof(root *TreeNode, leafIdx int) ([]*TreeNode, error) {
 	}
 
 	for parent != root {
-		sibling, _ = findSibling(root, parent)
+		sibling, err = findSibling(root, parent)
+		if err != nil {
+			return nil, err
+		}
 		result = append(result, sibling)
-		parent, _ = findParent(root, parent)
+		parent, err = findParent(root, parent)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return result, nil

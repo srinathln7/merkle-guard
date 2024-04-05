@@ -61,12 +61,6 @@ func Upload(grpcClient api.MerkleTreeClient, files [][]byte) (*UploadResponse, e
 	// Store the resulting merkle root hash on client side disk - say a simple `.json` file
 	util.ClientLog("storing the merkle tree root hash on client's disk")
 
-	// err = os.WriteFile(os.Getenv("MERKLE_ROOT_FILE"), resp.MerkleRootHash, 0644)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	//MERKLE_ROOT_FILE = string(resp.MerkleRootHash)
 	return &UploadResponse{
 		Msg:      "all files uploaded successfully",
 		RootHash: string(resp.MerkleRootHash),
@@ -92,7 +86,7 @@ func Download(grpcClient api.MerkleTreeClient, fileIdx int) (*DownloadResponse, 
 		return nil, err
 	}
 
-	msg := fmt.Sprintf("file%d downloaded successfully \n", fileIdx)
+	msg := fmt.Sprintf("file%d downloaded successfully\n", fileIdx)
 	return &DownloadResponse{
 		Msg:  msg,
 		File: resp.FileContent,
@@ -118,7 +112,7 @@ func GetMerkleProof(grpcClient api.MerkleTreeClient, fileIdx int) (*ProofRespons
 		return nil, err
 	}
 
-	msg := fmt.Sprintf("merkle proofs for file%d generated successfully \n", fileIdx)
+	msg := fmt.Sprintf("merkle proofs for file%d generated successfully\n", fileIdx)
 	return &ProofResponse{
 		Msg:    msg,
 		Proofs: resp.Proofs,
@@ -158,7 +152,7 @@ func VerifyMerkleProof(grpcClient api.MerkleTreeClient, req VerifyRequest) (*Ver
 		return nil, mterr.ErrMerkleVerificationFail
 	}
 
-	msg := fmt.Sprintf("merkle verification for file%d is successful \n", req.FileIdx)
+	msg := fmt.Sprintf("merkle verification for file%d is successful\n", req.FileIdx)
 	return &VerifyResponse{
 		Msg:       msg,
 		IsVerfied: true,

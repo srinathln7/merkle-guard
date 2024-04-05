@@ -124,7 +124,7 @@ func testClientMerkleVerficationEmptyFile(t *testing.T, grpcClient api.MerkleTre
 	}
 }
 
-func testClientMerkleVerficationUploadFail(t *testing.T, grpcClient api.MerkleTreeClient) {
+func testClientMerkleRootMisMatch(t *testing.T, grpcClient api.MerkleTreeClient) {
 	ctx := context.Background()
 	files := [][]byte{
 		[]byte("A"), []byte("B"), []byte("C"), []byte("D"),
