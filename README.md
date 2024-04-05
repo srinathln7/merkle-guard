@@ -27,9 +27,9 @@ go run main.go verifyMerkleProofs -r <merkle_root_hash_path> -f <file_dir> -i <f
 ```
 go run main.go upload -d "./sample/upload" -O "./sample"
 
-go run main.go download -i 0 -o "./sample/download"
+go run main.go download -i 1 -o "./sample/download"
 
-go run main.go getMerkleProofs -i 0 -o "./sample/merkle-proofs"
+go run main.go getMerkleProofs -i 1 -o "./sample/merkle-proofs"
 
-go run main.go verifyMerkleProofs -r "./sample" -f "./sample/download" -i 0 -p "./sample/merkle-proofs"
+go run main.go verifyMerkleProofs -r "./sample" -f "./sample/download" -i 1 -p "./sample/merkle-proofs"
 ```

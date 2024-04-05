@@ -1,0 +1,34 @@
+version: '3'
+services:
+  merkle-gaurd-server:
+    container_name: local-merkle-gaurd-server
+    build:
+      context: ../../
+      dockerfile: deploy/local/Dockerfile.server
+    networks:
+      - merkle-gaurd-net
+    ports:
+      - "50051:50051"
+    environment:
+      SERVER_ADDRESS: merkle-gaurd-server:50051 
+
+  merkle-gaurd-client:
+    container_name: local-merkle-gaurd-client 
+    build:
+      context: ../../
+      dockerfile: deploy/local/Dockerfile.client
+    networks:
+      - merkle-gaurd-net
+    environment:
+      SERVER_ADDRESS: merkle-gaurd-server:50051  
+    depends_on:
+      - merkle-gaurd-server
+
+networks:
+  merkle-gaurd-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/16 
+
