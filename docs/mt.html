@@ -1,0 +1,504 @@
+using module mode; GOMOD=/home/client/go/src/github.com/srinathLN7/merkle-gaurd/go.mod
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#375EAB">
+
+  <title>merkle - Go Documentation Server</title>
+
+<link type="text/css" rel="stylesheet" href="/lib/godoc/style.css">
+
+<script>window.initFuncs = [];</script>
+<script src="/lib/godoc/jquery.js" defer></script>
+
+
+
+<script>var goVersion = "go1.20.4";</script>
+<script src="/lib/godoc/godocs.js" defer></script>
+</head>
+<body>
+
+<div id='lowframe' style="position: fixed; bottom: 0; left: 0; height: 0; width: 100%; border-top: thin solid grey; background-color: white; overflow: auto;">
+...
+</div><!-- #lowframe -->
+
+<div id="topbar" class="wide"><div class="container">
+<div class="top-heading" id="heading-wide"><a href="/pkg/">Go Documentation Server</a></div>
+<div class="top-heading" id="heading-narrow"><a href="/pkg/">GoDoc</a></div>
+<a href="#" id="menu-button"><span id="menu-button-arrow">&#9661;</span></a>
+<form method="GET" action="/search">
+<div id="menu">
+
+<span class="search-box"><input type="search" id="search" name="q" placeholder="Search" aria-label="Search" required><button type="submit"><span><!-- magnifying glass: --><svg width="24" height="24" viewBox="0 0 24 24"><title>submit search</title><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg></span></button></span>
+</div>
+</form>
+
+</div></div>
+
+
+
+<div id="page" class="wide">
+<div class="container">
+
+
+  <h1>
+    Package merkle
+    <span class="text-muted"></span>
+  </h1>
+
+
+
+
+
+
+
+<div id="nav"></div>
+
+
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script>
+	document.ANALYSIS_DATA = null;
+	document.CALLGRAPH = null;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "github.com/srinathln7/merkle_gaurd/internal/merkle"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="#CalcHash">func CalcHash(file []byte) string</a></dd>
+			
+				
+				<dd><a href="#countNodes">func countNodes(root *TreeNode) int</a></dd>
+			
+				
+				<dd><a href="#genProofIdx">func genProofIdx(root *TreeNode, leafIdx int) ([][]int, error)</a></dd>
+			
+				
+				<dd><a href="#maxDepth">func maxDepth(root *TreeNode) int</a></dd>
+			
+				
+				<dd><a href="#printTree">func printTree(node *TreeNode, prefix string, isLeft bool)</a></dd>
+			
+			
+				
+				<dd><a href="#MerkleTree">type MerkleTree</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#BuildMerkleTree">func BuildMerkleTree(file [][]byte) (*MerkleTree, error)</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#MerkleTree.GenerateMerkleProof">func (mt *MerkleTree) GenerateMerkleProof(leafIdx int) ([]*TreeNode, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#MerkleTree.GetMerkleRoot">func (mt *MerkleTree) GetMerkleRoot() *TreeNode</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#MerkleTree.PrintTreeInfo">func (mt *MerkleTree) PrintTreeInfo()</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#MerkleTree.VerifyMerkleProof">func (mt *MerkleTree) VerifyMerkleProof(rootHash, fileHash string, fileIdx int, proofs []*TreeNode) (bool, error)</a></dd>
+				
+			
+				
+				<dd><a href="#TreeNode">type TreeNode</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#buildTree">func buildTree(file [][]byte, l, r int) *TreeNode</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#findLeaf">func findLeaf(root *TreeNode, leafIdx int) (*TreeNode, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#findParent">func findParent(root, node *TreeNode) (*TreeNode, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#findParentByLeafIndex">func findParentByLeafIndex(root *TreeNode, leafIdx int) (*TreeNode, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#findSibling">func findSibling(root, node *TreeNode) (*TreeNode, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#findSiblingByLeafIndex">func findSiblingByLeafIndex(root *TreeNode, leafIdx int) (*TreeNode, error)</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#genProof">func genProof(root *TreeNode, leafIdx int) ([]*TreeNode, error)</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go">merkle.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		
+
+		
+		
+		
+			
+			
+			<h2 id="CalcHash">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=7684:7717#L267">CalcHash</a>
+				<a class="permalink" href="#CalcHash">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func CalcHash(file []<a href="/pkg/builtin/#byte">byte</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			<p>calcHash calculates the SHA-256 hash of the given byte slice and returns it as a hexadecimal string.
+
+			
+			
+
+		
+			
+			
+			<h2 id="countNodes">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=7851:7886#L273">countNodes</a>
+				<a class="permalink" href="#countNodes">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func countNodes(root *<a href="#TreeNode">TreeNode</a>) <a href="/pkg/builtin/#int">int</a></pre>
+			<p>countNodes counts the total number of nodes in the Merkle tree.
+
+			
+			
+
+		
+			
+			
+			<h2 id="genProofIdx">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=4805:4867#L153">genProofIdx</a>
+				<a class="permalink" href="#genProofIdx">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func genProofIdx(root *<a href="#TreeNode">TreeNode</a>, leafIdx <a href="/pkg/builtin/#int">int</a>) ([][]<a href="/pkg/builtin/#int">int</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+			<p>genProofIdx generates proof indices for the leaf node corresponding to the given leaf index.
+It traverses the Merkle tree from the root to the leaf node, collecting the left and right indices
+of each node in the proof path and appends them to the result.
+
+			
+			
+
+		
+			
+			
+			<h2 id="maxDepth">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=8044:8077#L281">maxDepth</a>
+				<a class="permalink" href="#maxDepth">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func maxDepth(root *<a href="#TreeNode">TreeNode</a>) <a href="/pkg/builtin/#int">int</a></pre>
+			<p>maxDepth calculates the maximum depth of the Merkle tree.
+
+			
+			
+
+		
+			
+			
+			<h2 id="printTree">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=5145:5203#L167">printTree</a>
+				<a class="permalink" href="#printTree">&#xb6;</a>
+				
+				
+			</h2>
+			<pre>func printTree(node *<a href="#TreeNode">TreeNode</a>, prefix <a href="/pkg/builtin/#string">string</a>, isLeft <a href="/pkg/builtin/#bool">bool</a>)</pre>
+			<p>printTree prints the Merkle tree in a tree-like format.
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="MerkleTree">type <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=446:520#L11">MerkleTree</a>
+				<a class="permalink" href="#MerkleTree">&#xb6;</a>
+				
+				
+			</h2>
+			<p>MerkleTree represents a Merkle tree.
+
+			<pre>type MerkleTree struct {
+<span id="MerkleTree.root"></span>    root *<a href="#TreeNode">TreeNode</a> <span class="comment">// Root node of the Merkle tree</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="BuildMerkleTree">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=588:644#L16">BuildMerkleTree</a>
+					<a class="permalink" href="#BuildMerkleTree">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func BuildMerkleTree(file [][]<a href="/pkg/builtin/#byte">byte</a>) (*<a href="#MerkleTree">MerkleTree</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>BuildMerkleTree builds a Merkle tree from the given file data.
+
+				
+				
+			
+
+			
+				
+				<h3 id="MerkleTree.GenerateMerkleProof">func (*MerkleTree) <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=935:1010#L29">GenerateMerkleProof</a>
+					<a class="permalink" href="#MerkleTree.GenerateMerkleProof">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mt *<a href="#MerkleTree">MerkleTree</a>) GenerateMerkleProof(leafIdx <a href="/pkg/builtin/#int">int</a>) ([]*<a href="#TreeNode">TreeNode</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>GenerateMerkleProof generates a Merkle proof for the given leaf index.
+
+				
+				
+				
+			
+				
+				<h3 id="MerkleTree.GetMerkleRoot">func (*MerkleTree) <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=2563:2610#L79">GetMerkleRoot</a>
+					<a class="permalink" href="#MerkleTree.GetMerkleRoot">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mt *<a href="#MerkleTree">MerkleTree</a>) GetMerkleRoot() *<a href="#TreeNode">TreeNode</a></pre>
+				<p>GetMerkleRoot returns the root node of the Merkle tree.
+If the MerkleTree instance is nil, it returns nil.
+
+				
+				
+				
+			
+				
+				<h3 id="MerkleTree.PrintTreeInfo">func (*MerkleTree) <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=2846:2883#L89">PrintTreeInfo</a>
+					<a class="permalink" href="#MerkleTree.PrintTreeInfo">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mt *<a href="#MerkleTree">MerkleTree</a>) PrintTreeInfo()</pre>
+				<p>PrintTreeInfo prints information about the Merkle tree.
+It displays the total number of nodes in the tree and its height.
+Additionally, it prints the Merkle tree structure.
+
+				
+				
+				
+			
+				
+				<h3 id="MerkleTree.VerifyMerkleProof">func (*MerkleTree) <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=1253:1366#L35">VerifyMerkleProof</a>
+					<a class="permalink" href="#MerkleTree.VerifyMerkleProof">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func (mt *<a href="#MerkleTree">MerkleTree</a>) VerifyMerkleProof(rootHash, fileHash <a href="/pkg/builtin/#string">string</a>, fileIdx <a href="/pkg/builtin/#int">int</a>, proofs []*<a href="#TreeNode">TreeNode</a>) (<a href="/pkg/builtin/#bool">bool</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>VerifyMerkleProof verifies the Merkle proof for the given file data and leaf index.
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="TreeNode">type <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=162:404#L2">TreeNode</a>
+				<a class="permalink" href="#TreeNode">&#xb6;</a>
+				
+				
+			</h2>
+			<p>TreeNode represents a node in the Merkle tree.
+
+			<pre>type TreeNode struct {
+<span id="TreeNode.Hash"></span>    Hash     <a href="/pkg/builtin/#string">string</a>    <span class="comment">// Hash value of the node</span>
+<span id="TreeNode.LeftIdx"></span>    LeftIdx  <a href="/pkg/builtin/#int">int</a>       <span class="comment">// Left index of the node</span>
+<span id="TreeNode.RightIdx"></span>    RightIdx <a href="/pkg/builtin/#int">int</a>       <span class="comment">// Right index of the node</span>
+<span id="TreeNode.Left"></span>    Left     *<a href="#TreeNode">TreeNode</a> <span class="comment">// Left child node</span>
+<span id="TreeNode.Right"></span>    Right    *<a href="#TreeNode">TreeNode</a> <span class="comment">// Right child node</span>
+}
+</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+				
+				<h3 id="buildTree">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=3372:3421#L100">buildTree</a>
+					<a class="permalink" href="#buildTree">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func buildTree(file [][]<a href="/pkg/builtin/#byte">byte</a>, l, r <a href="/pkg/builtin/#int">int</a>) *<a href="#TreeNode">TreeNode</a></pre>
+				<p>buildTree recursively builds the Merkle tree.
+
+				
+				
+			
+				
+				<h3 id="findLeaf">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=5584:5645#L182">findLeaf</a>
+					<a class="permalink" href="#findLeaf">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func findLeaf(root *<a href="#TreeNode">TreeNode</a>, leafIdx <a href="/pkg/builtin/#int">int</a>) (*<a href="#TreeNode">TreeNode</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>findLeaf finds the leaf node corresponding to the given leaf index.
+
+				
+				
+			
+				
+				<h3 id="findParent">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=6149:6205#L201">findParent</a>
+					<a class="permalink" href="#findParent">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func findParent(root, node *<a href="#TreeNode">TreeNode</a>) (*<a href="#TreeNode">TreeNode</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>findParent finds the parent node of the given node.
+
+				
+				
+			
+				
+				<h3 id="findParentByLeafIndex">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=7001:7075#L240">findParentByLeafIndex</a>
+					<a class="permalink" href="#findParentByLeafIndex">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func findParentByLeafIndex(root *<a href="#TreeNode">TreeNode</a>, leafIdx <a href="/pkg/builtin/#int">int</a>) (*<a href="#TreeNode">TreeNode</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>findParentByLeafIndex finds the parent node of the leaf node corresponding to the given leaf index.
+
+				
+				
+			
+				
+				<h3 id="findSibling">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=6635:6692#L224">findSibling</a>
+					<a class="permalink" href="#findSibling">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func findSibling(root, node *<a href="#TreeNode">TreeNode</a>) (*<a href="#TreeNode">TreeNode</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>findSibling finds the sibling node of the given node.
+
+				
+				
+			
+				
+				<h3 id="findSiblingByLeafIndex">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=7335:7410#L254">findSiblingByLeafIndex</a>
+					<a class="permalink" href="#findSiblingByLeafIndex">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func findSiblingByLeafIndex(root *<a href="#TreeNode">TreeNode</a>, leafIdx <a href="/pkg/builtin/#int">int</a>) (*<a href="#TreeNode">TreeNode</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>findSiblingByLeafIndex finds the sibling node of the leaf node corresponding to the given leaf index.
+
+				
+				
+			
+				
+				<h3 id="genProof">func <a href="/src/github.com/srinathln7/merkle_gaurd/internal/merkle/merkle.go?s=3825:3888#L117">genProof</a>
+					<a class="permalink" href="#genProof">&#xb6;</a>
+					
+					
+				</h3>
+				<pre>func genProof(root *<a href="#TreeNode">TreeNode</a>, leafIdx <a href="/pkg/builtin/#int">int</a>) ([]*<a href="#TreeNode">TreeNode</a>, <a href="/pkg/builtin/#error">error</a>)</pre>
+				<p>genProof generates a Merkle proof for the given leaf index.
+
+				
+				
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
+
+
+<div id="footer">
+Build version go1.20.4.<br>
+Except as <a href="https://developers.google.com/site-policies#restrictions">noted</a>,
+the content of this page is licensed under the
+Creative Commons Attribution 3.0 License,
+and code is licensed under a <a href="/LICENSE">BSD license</a>.<br>
+<a href="https://golang.org/doc/tos.html">Terms of Service</a> |
+<a href="https://www.google.com/intl/en/policies/privacy/">Privacy Policy</a>
+</div>
+
+</div><!-- .container -->
+</div><!-- #page -->
+</body>
+</html>
