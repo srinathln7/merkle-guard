@@ -86,7 +86,7 @@ func Download(grpcClient api.MerkleTreeClient, fileIdx int) (*DownloadResponse, 
 		return nil, err
 	}
 
-	msg := fmt.Sprintf("file%d downloaded successfully\n", fileIdx)
+	msg := fmt.Sprintf("file%d downloaded successfully", fileIdx)
 	return &DownloadResponse{
 		Msg:  msg,
 		File: resp.FileContent,
@@ -152,7 +152,7 @@ func VerifyMerkleProof(grpcClient api.MerkleTreeClient, req VerifyRequest) (*Ver
 		return nil, mterr.ErrMerkleVerificationFail
 	}
 
-	msg := fmt.Sprintf("merkle verification for file%d is successful\n", req.FileIdx)
+	msg := fmt.Sprintf("merkle verification for file%d is successful", req.FileIdx)
 	return &VerifyResponse{
 		Msg:       msg,
 		IsVerfied: true,

@@ -1,6 +1,8 @@
 # Merkle-Gaurd
 
+Merkle Guard aims at providing a secure and efficient way to manage and verify file integrity using Merkle trees. It leverages  segment trees for building Merkle trees, utilizes gRPC protocol for communication between clients and servers, and offers a CLI application for easy client access. The project is designed to be deployable using Docker Compose, ensuring ease of deployment and scalability.
 
+Click [here](https://github.com/srinathln7/merkle-gaurd/blob/main/OVERVIEW.md) to watch the demo presentation. 
 
 ## Requirements
 
@@ -12,7 +14,19 @@
 
 ## Project Structure
 
-Refer [here](https://github.com/srinathLN7/merkle-gaurd/blob/main/OVERVIEW.md) for the complete overview of the protocol and the project structure.
+Refer [here](https://github.com/srinathLN7/merkle-gaurd/blob/main/OVERVIEW.md) for the challenge description and the project structure.
+
+## Features
+
+- **Merkle Tree Construction**: The project employs [segment trees](https://en.wikipedia.org/wiki/Segment_tree) for constructing Merkle trees efficiently. Merkle trees provide a cryptographic hash-based data structure that allows for efficient verification of large datasets. Building merkle trees from scratch and generating merkle proofs for a given file index forms the crux of the project. For more information about this refer [here](https://github.com/srinathln7/merkle-gaurd/tree/main/internal/merkle).  
+
+- **Protocol Buffers**: We define a Protocol Buffers (protobuf) file to specify the structure of messages exchanged between the client and server. Protocol Buffers offer a language-agnostic and efficient way to serialize structured data. Click [here](https://github.com/srinathln7/merkle-gaurd/tree/main/api/v1/proto) to learn more.
+
+- **gRPC Communication**: gRPC is utilized as the underlying communication protocol between the client and server. This ensures efficient and secure communication between components. Click here to access more info about the grpc [server](https://github.com/srinathln7/merkle-gaurd/tree/main/internal/server) and [client](https://github.com/srinathln7/merkle-gaurd/tree/main/internal/client)
+
+- **CLI Application**: Merkle Guard provides a CLI application for clients to interact with the server. This CLI application offers commands for uploading files, downloading files, generating Merkle proofs, and verifying file integrity. See [here](https://github.com/srinathln7/merkle-gaurd/tree/main/cmd) for more infomation.
+
+- **Docker Compose Deployment**: The project includes Docker Compose configuration for easy deployment and scaling. Docker Compose allows for the deployment of the entire application stack with a single command, simplifying the deployment process.
 
 
 ## Usage
@@ -56,15 +70,23 @@ cd merkle-gaurd
 ./mg verifyMerkleProofs -r <merkle_root_hash_path> -f <file_dir> -i <file_idx> -p <merkle_proof_path_dir> 
 ```
 
-### Examples
+### Example Usage
 
 ```
+
+#  Upload from the client
 ./mg upload -d "./sample/upload" -O "./sample"
 
+# Delete the uploaded files from the client's disk
+rm -rf ./sample/upload
+
+# Download from the server
 ./mg download -i 0 -o "./sample/download"
 
+# Extract the merkle proof for file0 from the server
 ./mg getMerkleProofs -i 0 -o "./sample/merkle-proofs"
 
+# Verify the merkle proof for file0 from the server
 ./mg verifyMerkleProofs -r "./sample" -f "./sample/download" -i 0 -p "./sample/merkle-proofs"
 ```
 
@@ -100,7 +122,6 @@ docker compose down
 
 ## Testing
 
-### Unit Tests
 
 To run all the test files in this project, run the following command in your local development terminal:
 
@@ -133,5 +154,12 @@ To enhance the merkle-gaurd protocol, the following improvements can be implemen
 * Deployment Scripts for Cloud:
   - Develop deployment scripts to automate the process of deploying the gRPC server and client containers to the cloud platform such as AWS, Azure, GCP etc. This streamlines the deployment process and facilitates scalability and reliability.
 
+* Database integration:
+  -  Integrate a database into the gRPC server to persist file information, upload proofs, and other relevant data across server restarts. By leveraging a database, , the server can store and retrieve file metadata efficiently, ensuring data integrity and reliability. This enhancement allows the server to maintain stateful information, enabling seamless continuation of operations even after server restarts or failures. 
 
+* Introduce custom gRPC error messages:
+  - Utilize packages like `google.golang.org/genproto/googleapis/rpc/errdetails` and `google.golang.org/grpc/status` to create and propagate custom error messages throughout the gRPC communication layer. This enhancement enhances error handling and provides more informative feedback to clients, aiding in debugging and troubleshooting. Custom error messages can convey specific details about the encountered issues, improving the overall user experience and facilitating faster resolution of errors.
+  
+## License
 
+This project is licensed under the [MIT License](LICENSE).

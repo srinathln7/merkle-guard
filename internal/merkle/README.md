@@ -29,14 +29,24 @@ In summary, the approach of using segment trees to build Merkle trees offers a b
 This file implements the Merkle tree data structure and related functionalities for building the tree, generating Merkle proofs, verifying proofs, and retrieving tree metadata.
 
 - **TreeNode:** Represents a node in the Merkle tree, containing its hash value, left and right indices, and child nodes.
+
 - **MerkleTree:** Represents the Merkle tree itself, consisting of a root node.
-- **BuildMerkleTree:** Builds a Merkle tree from the given file data.
-- **GenerateMerkleProof:** Generates a Merkle proof for a specified leaf index.
+
+- **BuildMerkleTree:** Builds a Merkle tree recursively from the given file data.
+
+- **GenerateMerkleProof:** Generates a Merkle proof for a specified leaf index. It uses the `genProof` function which is responsible for generating Merkle proofs for a given leaf node in a Merkle tree. Merkle proofs are cryptographic constructs that provide evidence of the inclusion or absence of a specific data item (represented by a leaf node) in the Merkle tree. This function takes as input the root node of the Merkle tree and the index of the leaf node for which the proof is to be generated. It traverses the tree from the leaf node to the root, collecting **sibling** nodes along the way. These sibling nodes, along with intermediate parent nodes, form the proof.
+The function performs input validation to ensure the integrity of the Merkle tree structure and returns an error if the root node is nil or if the leaf index is out of bounds. Once the traversal is complete, the function constructs and returns an array of sibling nodes, which collectively form the Merkle proof for the specified leaf node. Overall, `genProof` facilitates the generation of Merkle proofs, a crucial aspect of ensuring data integrity and security.
+
 - **VerifyMerkleProof:** Verifies a Merkle proof for a given file data and leaf index.
+
 - **GetMerkleRoot:** Returns the root node of the Merkle tree.
+
 - **PrintTreeInfo:** Prints information about the Merkle tree, including the number of nodes and its height.
+
 - **CalcHash:** Calculates the SHA-256 hash of a byte slice and returns it as a hexadecimal string.
+
 - **countNodes:** Counts the total number of nodes in the Merkle tree.
+
 - **maxDepth:** Calculates the maximum depth of the Merkle tree.
 
 ## merkle_test.go
