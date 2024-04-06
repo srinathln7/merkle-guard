@@ -1,3 +1,7 @@
+# Ignore these files
 sample/download
 sample/merkle-proofs
 sample/merkleroot.txt
+
+# Ignore the mg binary
+mg/ 

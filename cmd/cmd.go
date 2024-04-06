@@ -45,7 +45,7 @@ var RootCmd = &cobra.Command{
 
 		color.Yellow("************************ Welcome to Merkle-Gaurd CLI *****************")
 		color.Yellow("Please use any of the following sub-commands 'upload', 'download', 'getMerkleProofs' or 'verifyMerkleProofs'")
-		color.Yellow("To upload a set of files from the directory: go run main.go upload -d <files_dir>`")
+		color.Yellow("To upload a set of files from the directory: go run main.go upload -d <files_dir> -O <merkle_root_hash_path>`")
 		color.Yellow("To download a file for the given file index from the server to a specified path: `go run main.go download -i <file_idx> -o <download_path_file_dir>`")
 		color.Yellow("To get merkle proofs for the given file index from the server: `go run main.go getMerkleProofs -i <file_idx> -o <merkle_proof_path_dir>`")
 		color.Yellow("To verify merkle proofs for the given file `go run main.go verifyMerkleProofs -r <merkle_root_hash_path> -f <file_dir> -i <file_idx> -p <merkle_proof_path_dir>`")
@@ -108,7 +108,7 @@ var downloadCmd = &cobra.Command{
 			return
 		}
 
-		err = util.WriteFile(fileDir, "file"+strconv.Itoa(fileIdx)+".txt", string(downloadRes.File))
+		err = util.WriteFile(fileDir, os.Getenv("FILE_PREFIX")+strconv.Itoa(fileIdx)+os.Getenv("FILE_FORMAT"), string(downloadRes.File))
 		if err != nil {
 			log.Fatalf("error downloading file to the specified path: %v", err)
 		}
@@ -136,7 +136,7 @@ var getMerkleProofsCmd = &cobra.Command{
 			log.Fatal("error:", err)
 		}
 
-		err = util.WriteFile(fileDir, "file"+strconv.Itoa(fileIdx)+".txt", string(resJSON))
+		err = util.WriteFile(fileDir, os.Getenv("FILE_PREFIX")+strconv.Itoa(fileIdx)+os.Getenv("FILE_FORMAT"), string(resJSON))
 		if err != nil {
 			log.Fatalf("error writing merkle proofs to the specified path: %v", err)
 		}
@@ -160,13 +160,13 @@ var verifyMerkleProofsCmd = &cobra.Command{
 			log.Fatalf("error reading merkle root hash from the client's disk path %s", rootHashFile)
 		}
 
-		filePath := filepath.Join(fileDir, "file"+strconv.Itoa(fileIdx)+".txt")
+		filePath := filepath.Join(fileDir, os.Getenv("FILE_PREFIX")+strconv.Itoa(fileIdx)+os.Getenv("FILE_FORMAT"))
 		file, err := os.ReadFile(filePath)
 		if err != nil {
 			log.Fatalf("error reading the file from the file path %s", filePath)
 		}
 
-		proofsFile := filepath.Join(proofsDir, "file"+strconv.Itoa(fileIdx)+".txt")
+		proofsFile := filepath.Join(proofsDir, os.Getenv("FILE_PREFIX")+strconv.Itoa(fileIdx)+os.Getenv("FILE_FORMAT"))
 		proofsRespBytes, err := os.ReadFile(proofsFile)
 		if err != nil {
 			log.Fatalf("error reading the merkle proofs for the file from the specified path %s", proofsFile)

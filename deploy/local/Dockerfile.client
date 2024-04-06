@@ -12,11 +12,11 @@ RUN go mod download
 COPY . .
 
 # Build the gRPC server executable
-RUN go build -o merkle_gaurd .
+RUN go build -o mg .
 
 # Expose the port used by the gRPC client (optional)
 EXPOSE 50051
 
 
 # Run the gRPC server when the container starts
-CMD ["./merkle_gaurd"]
+CMD ["./mg"]
