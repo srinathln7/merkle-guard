@@ -2,7 +2,7 @@
 
 Merkle Guard aims at providing a secure and efficient way to manage and verify file integrity using Merkle trees. It leverages  segment trees for building Merkle trees, utilizes gRPC protocol for communication between clients and servers, and offers a CLI application for easy client access. The project is designed to be deployable using Docker Compose, ensuring ease of deployment and scalability.
 
-Click [here](https://github.com/srinathln7/merkle-gaurd/blob/main/OVERVIEW.md) to watch the demo presentation. 
+Click [here](https://youtu.be/zx56EzxxuK4) to watch the demo presentation. 
 
 ## Requirements
 
