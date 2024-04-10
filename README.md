@@ -1,4 +1,4 @@
-# Merkle-Gaurd
+# Merkle-Guard
 
 Merkle Guard aims at providing a secure and efficient way to manage and verify file integrity using Merkle trees. It leverages  segment trees for building Merkle trees, utilizes gRPC protocol for communication between clients and servers, and offers a CLI application for easy client access. The project is designed to be deployable using Docker Compose, ensuring ease of deployment and scalability.
 
@@ -14,17 +14,17 @@ Click [here](https://youtu.be/zx56EzxxuK4) to watch the demo presentation.
 
 ## Project Structure
 
-Refer [here](https://github.com/srinathLN7/merkle-gaurd/blob/main/OVERVIEW.md) for the challenge description and the project structure.
+Refer [here](https://github.com/srinathLN7/merkle-guard/blob/main/OVERVIEW.md) for the challenge description and the project structure.
 
 ## Features
 
-- **Merkle Tree Construction**: The project employs [segment trees](https://en.wikipedia.org/wiki/Segment_tree) for constructing Merkle trees efficiently. Merkle trees provide a cryptographic hash-based data structure that allows for efficient verification of large datasets. Building merkle trees from scratch and generating merkle proofs for a given file index forms the crux of the project. For more information about this refer [here](https://github.com/srinathln7/merkle-gaurd/tree/main/internal/merkle).  
+- **Merkle Tree Construction**: The project employs [segment trees](https://en.wikipedia.org/wiki/Segment_tree) for constructing Merkle trees efficiently. Merkle trees provide a cryptographic hash-based data structure that allows for efficient verification of large datasets. Building merkle trees from scratch and generating merkle proofs for a given file index forms the crux of the project. For more information about this refer [here](https://github.com/srinathln7/merkle-guard/tree/main/internal/merkle).  
 
-- **Protocol Buffers**: We define a Protocol Buffers (protobuf) file to specify the structure of messages exchanged between the client and server. Protocol Buffers offer a language-agnostic and efficient way to serialize structured data. Click [here](https://github.com/srinathln7/merkle-gaurd/tree/main/api/v1/proto) to learn more.
+- **Protocol Buffers**: We define a Protocol Buffers (protobuf) file to specify the structure of messages exchanged between the client and server. Protocol Buffers offer a language-agnostic and efficient way to serialize structured data. Click [here](https://github.com/srinathln7/merkle-guard/tree/main/api/v1/proto) to learn more.
 
-- **gRPC Communication**: gRPC is utilized as the underlying communication protocol between the client and server. This ensures efficient and secure communication between components. Click here to access more info about the grpc [server](https://github.com/srinathln7/merkle-gaurd/tree/main/internal/server) and [client](https://github.com/srinathln7/merkle-gaurd/tree/main/internal/client)
+- **gRPC Communication**: gRPC is utilized as the underlying communication protocol between the client and server. This ensures efficient and secure communication between components. Click here to access more info about the grpc [server](https://github.com/srinathln7/merkle-guard/tree/main/internal/server) and [client](https://github.com/srinathln7/merkle-guard/tree/main/internal/client)
 
-- **CLI Application**: Merkle Guard provides a CLI application for clients to interact with the server. This CLI application offers commands for uploading files, downloading files, generating Merkle proofs, and verifying file integrity. See [here](https://github.com/srinathln7/merkle-gaurd/tree/main/cmd) for more infomation.
+- **CLI Application**: Merkle Guard provides a CLI application for clients to interact with the server. This CLI application offers commands for uploading files, downloading files, generating Merkle proofs, and verifying file integrity. See [here](https://github.com/srinathln7/merkle-guard/tree/main/cmd) for more infomation.
 
 - **Docker Compose Deployment**: The project includes Docker Compose configuration for easy deployment and scaling. Docker Compose allows for the deployment of the entire application stack with a single command, simplifying the deployment process.
 
@@ -34,13 +34,13 @@ Refer [here](https://github.com/srinathLN7/merkle-gaurd/blob/main/OVERVIEW.md) f
 1. Clone the repository:
 
 ```
-git clone https://github.com/username/merkle-gaurd.git
+git clone https://github.com/username/merkle-guard.git
 ```
 
 2. Change into the project directory:
 
 ```
-cd merkle-gaurd
+cd merkle-guard
 ```
 
 ### Build Binaries
@@ -106,10 +106,10 @@ docker compose up
 
 If you encounter issues with building the containers due to IP address overlap, it is likely caused by conflicting IP addresses in the network. To resolve this, you can change the subnet address used for the containers to ensure uniqueness. By selecting a different subnet address, you can avoid conflicts and successfully build the containers.
 
-2. Enter the Docker `local-merkle-gaurd-client` container:
+2. Enter the Docker `local-merkle-guard-client` container:
 
 ```
-docker exec -it local-merkle-gaurd-client sh
+docker exec -it local-merkle-guard-client sh
 ```
 
 Repeat steps under the **Examples** section to test for various test sceanarios. 
@@ -134,7 +134,7 @@ Upon running this command, you should see all the test cases passing, ensuring t
 
 ## API Documentation
 
-For the API documentation, refer to the [docs](https://github.com/srinathln7/merkle-gaurd/tree/main/docs) directory containing individual API documentation about the gRPC server and client APIs.
+For the API documentation, refer to the [docs](https://github.com/srinathln7/merkle-guard/tree/main/docs) directory containing individual API documentation about the gRPC server and client APIs.
 
 Alternatively, if you wish to build your own docs, run:
 
@@ -142,11 +142,11 @@ Alternatively, if you wish to build your own docs, run:
 godoc 
 ```
 
-and navigate to http://localhost:6060/pkg/github.com/srinathln7/merkle_gaurd/internal/?m=all in your browser. You will find the links to all three packages: server, client, and merkle.
+and navigate to http://localhost:6060/pkg/github.com/srinathln7/merkle_guard/internal/?m=all in your browser. You will find the links to all three packages: server, client, and merkle.
 
 ## Improvements
 
-To enhance the merkle-gaurd protocol, the following improvements can be implemented:
+To enhance the merkle-guard protocol, the following improvements can be implemented:
 
 * Implement Mutual TLS Authentication:
   - Introduce Mutual TLS-based authentication between the gRPC server and client to establish a secure and trusted communication channel. This ensures that both parties can verify each other's identities and encrypt the data exchanged during communication.

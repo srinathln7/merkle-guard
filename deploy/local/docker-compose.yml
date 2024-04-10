@@ -1,37 +1,37 @@
 version: '3'
 services:
-  merkle-gaurd-server:
-    container_name: local-merkle-gaurd-server
+  merkle-guard-server:
+    container_name: local-merkle-guard-server
     build:
       context: ../../
       dockerfile: deploy/local/Dockerfile.server
     networks:
-      - merkle-gaurd-net
+      - merkle-guard-net
     ports:
       - "50051:50051"
     environment:
-      SERVER_ADDRESS: merkle-gaurd-server:50051
+      SERVER_ADDRESS: merkle-guard-server:50051
       MERKLE_ROOT_FILE: merkleroot.txt
       FILE_PREFIX: file
       FILE_FORMAT: .txt 
 
-  merkle-gaurd-client:
-    container_name: local-merkle-gaurd-client 
+  merkle-guard-client:
+    container_name: local-merkle-guard-client 
     build:
       context: ../../
       dockerfile: deploy/local/Dockerfile.client
     networks:
-      - merkle-gaurd-net
+      - merkle-guard-net
     environment:
-      SERVER_ADDRESS: merkle-gaurd-server:50051
+      SERVER_ADDRESS: merkle-guard-server:50051
       MERKLE_ROOT_FILE: merkleroot.txt
       FILE_PREFIX: file
       FILE_FORMAT: .txt  
     depends_on:
-      - merkle-gaurd-server
+      - merkle-guard-server
 
 networks:
-  merkle-gaurd-net:
+  merkle-guard-net:
     driver: bridge
     ipam:
       driver: default
